@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ShopVerse — E-Commerce</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0d0d0d;--surface:#161616;--card:#1e1e1e;--accent:#e8c547;--accent2:#ff6b35;--text:#f0ede8;--muted:#888;--border:#2a2a2a;--radius:12px}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden}
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:68px;background:rgba(13,13,13,0.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+  .nav-logo{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:900;color:var(--accent)}
+  .nav-links{display:flex;gap:32px;list-style:none}
+  .nav-links a{color:var(--muted);text-decoration:none;font-size:.9rem;font-weight:500;transition:color .2s}
+  .nav-links a:hover{color:var(--text)}
+  .nav-actions{display:flex;align-items:center;gap:16px}
+  .search-bar{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 14px}
+  .search-bar input{background:none;border:none;outline:none;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.88rem;width:180px}
+  .search-bar input::placeholder{color:var(--muted)}
+  .cart-btn{position:relative;background:var(--accent);color:#000;border:none;border-radius:8px;padding:9px 18px;font-weight:600;font-size:.88rem;cursor:pointer;display:flex;align-items:center;gap:6px;transition:background .2s;font-family:'DM Sans',sans-serif}
+  .cart-btn:hover{background:#f0d060}
+  .cart-count{position:absolute;top:-6px;right:-6px;background:var(--accent2);color:#fff;font-size:.7rem;font-weight:700;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center}
+  .hero{margin-top:68px;min-height:calc(100vh - 68px);display:flex;align-items:center;padding:80px 48px;background:radial-gradient(ellipse at 70% 50%,rgba(232,197,71,.08) 0%,transparent 60%),radial-gradient(ellipse at 20% 80%,rgba(255,107,53,.06) 0%,transparent 50%);position:relative;overflow:hidden}
+  .hero-content{max-width:600px;z-index:1}
+  .hero-eyebrow{display:inline-block;background:rgba(232,197,71,.15);border:1px solid rgba(232,197,71,.3);color:var(--accent);font-size:.8rem;font-weight:600;padding:6px 14px;border-radius:20px;margin-bottom:24px;letter-spacing:1px;text-transform:uppercase}
+  .hero h1{font-family:'Playfair Display',serif;font-size:clamp(2.8rem,6vw,5rem);font-weight:900;line-height:1.05;margin-bottom:20px}
+  .hero h1 span{color:var(--accent)}
+  .hero p{color:var(--muted);font-size:1.05rem;line-height:1.7;margin-bottom:36px;max-width:480px}
+  .hero-btns{display:flex;gap:14px;flex-wrap:wrap}
+  .btn-primary{background:var(--accent);color:#000;border:none;border-radius:10px;padding:14px 28px;font-weight:700;font-size:.95rem;cursor:pointer;transition:transform .2s,background .2s;font-family:'DM Sans',sans-serif}
+  .btn-primary:hover{background:#f0d060;transform:translateY(-1px)}
+  .btn-secondary{background:none;color:var(--text);border:1px solid var(--border);border-radius:10px;padding:14px 28px;font-weight:600;font-size:.95rem;cursor:pointer;transition:border-color .2s;font-family:'DM Sans',sans-serif}
+  .btn-secondary:hover{border-color:var(--text)}
+  .hero-stats{display:flex;gap:40px;margin-top:60px;padding-top:40px;border-top:1px solid var(--border)}
+  .stat-num{font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;color:var(--accent)}
+  .stat-label{font-size:.8rem;color:var(--muted);margin-top:2px}
+  .hero-card-float{position:absolute;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:0 20px 60px rgba(0,0,0,.5);animation:float 4s ease-in-out infinite;overflow:hidden}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+  .hc1{top:12%;right:60px;width:175px;animation-delay:0s}
+  .hc2{bottom:18%;right:250px;width:148px;animation-delay:1.5s}
+  .hc3{top:42%;right:265px;width:160px;animation-delay:.8s}
+  .hero-mini-svg{width:100%;height:108px;display:block}
+  .hero-mini-info{padding:10px 12px}
+  .mini-title{font-size:.77rem;font-weight:600;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .mini-price{font-size:.88rem;font-weight:700;color:var(--accent)}
+  section{padding:100px 48px}
+  .section-header{margin-bottom:56px}
+  .section-eyebrow{font-size:.78rem;font-weight:600;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px}
+  .section-title{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,3vw,2.6rem);font-weight:700}
+  .categories{background:var(--surface)}
+  .cat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:16px}
+  .cat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .2s,transform .2s}
+  .cat-card:hover{border-color:var(--accent);transform:translateY(-3px)}
+  .cat-svg{width:100%;height:88px;display:block}
+  .cat-body{padding:11px 14px}
+  .cat-name{font-size:.87rem;font-weight:600}
+  .cat-count{font-size:.74rem;color:var(--muted);margin-top:2px}
+  .filter-bar{display:flex;align-items:center;gap:12px;margin-bottom:36px;flex-wrap:wrap}
+  .filter-btn{background:var(--card);border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:8px 18px;font-size:.85rem;font-weight:500;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
+  .filter-btn.active,.filter-btn:hover{background:var(--accent);color:#000;border-color:var(--accent);font-weight:700}
+  .products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(268px,1fr));gap:24px}
+  .product-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:transform .25s,box-shadow .25s,border-color .25s;position:relative}
+  .product-card:hover{transform:translateY(-6px);box-shadow:0 24px 60px rgba(0,0,0,.4);border-color:rgba(232,197,71,.35)}
+  .product-img-wrap{position:relative;height:230px;overflow:hidden}
+  .product-img-wrap svg{width:100%;height:100%;display:block;transition:transform .4s}
+  .product-card:hover .product-img-wrap svg{transform:scale(1.04)}
+  .badge{position:absolute;top:12px;left:12px;background:var(--accent2);color:#fff;font-size:.7rem;font-weight:700;padding:3px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.5px;z-index:2}
+  .badge.new{background:#22c55e}
+  .wishlist-btn{position:absolute;top:12px;right:12px;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);border:none;border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;transition:background .2s,transform .2s;z-index:2}
+  .wishlist-btn:hover{background:rgba(232,197,71,.3);transform:scale(1.1)}
+  .product-info{padding:18px 20px 20px}
+  .product-cat{font-size:.73rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+  .product-name{font-weight:600;font-size:.96rem;margin-bottom:8px;line-height:1.4}
+  .product-rating{display:flex;align-items:center;gap:6px;margin-bottom:14px}
+  .stars{color:var(--accent);font-size:.82rem}
+  .rating-count{font-size:.76rem;color:var(--muted)}
+  .product-footer{display:flex;align-items:center;justify-content:space-between}
+  .product-price{font-family:'Playfair Display',serif;font-size:1.22rem;font-weight:700}
+  .product-price .old{text-decoration:line-through;color:var(--muted);font-size:.81rem;font-family:'DM Sans',sans-serif;font-weight:400;margin-left:6px}
+  .add-cart-btn{background:var(--accent);color:#000;border:none;border-radius:8px;padding:8px 16px;font-weight:700;font-size:.82rem;cursor:pointer;transition:background .2s,transform .15s;font-family:'DM Sans',sans-serif}
+  .add-cart-btn:hover{background:#f0d060;transform:scale(1.05)}
+  .add-cart-btn.added{background:#22c55e;color:#fff}
+  .promo-section{background:var(--surface)}
+  .promo-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+  .promo-card{border-radius:16px;overflow:hidden;position:relative;min-height:220px;display:flex;flex-direction:column;justify-content:flex-end}
+  .promo-bg-svg{position:absolute;inset:0;width:100%;height:100%}
+  .promo-overlay{position:absolute;inset:0}
+  .promo-card.gold .promo-overlay{background:linear-gradient(135deg,rgba(184,134,11,.88),rgba(232,197,71,.78))}
+  .promo-card.dark .promo-overlay{background:linear-gradient(135deg,rgba(10,10,30,.9),rgba(15,52,96,.84))}
+  .promo-content{position:relative;z-index:2;padding:32px 36px}
+  .promo-tag{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;opacity:.85}
+  .promo-headline{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:900;line-height:1.1;margin-bottom:18px}
+  .promo-card.gold .promo-tag,.promo-card.gold .promo-headline{color:#000}
+  .promo-card.dark .promo-tag{color:var(--accent)}
+  .promo-card.dark .promo-headline{color:#fff}
+  .promo-btn{display:inline-block;border:none;border-radius:8px;padding:10px 22px;font-weight:700;font-size:.88rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:transform .2s}
+  .promo-btn:hover{transform:translateY(-2px)}
+  .promo-card.gold .promo-btn{background:#000;color:#fff}
+  .promo-card.dark .promo-btn{background:var(--accent);color:#000}
+  .cart-overlay{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .3s}
+  .cart-overlay.open{opacity:1;pointer-events:all}
+  .cart-sidebar{position:fixed;right:-440px;top:0;bottom:0;width:420px;background:var(--surface);border-left:1px solid var(--border);z-index:201;padding:28px;transition:right .35s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;overflow-y:auto}
+  .cart-sidebar.open{right:0}
+  .cart-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px}
+  .cart-title{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700}
+  .close-btn{background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--text);width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.1rem}
+  .cart-items{flex:1}
+  .cart-item{display:flex;gap:14px;align-items:flex-start;padding:16px 0;border-bottom:1px solid var(--border)}
+  .cart-item-thumb{width:62px;height:62px;border-radius:10px;flex-shrink:0;overflow:hidden;background:var(--card)}
+  .cart-item-thumb svg{width:100%;height:100%}
+  .cart-item-info{flex:1}
+  .cart-item-name{font-size:.85rem;font-weight:600;margin-bottom:4px;line-height:1.3}
+  .cart-item-price{font-size:.85rem;color:var(--accent);font-weight:700}
+  .cart-item-qty{display:flex;align-items:center;gap:8px;margin-top:8px}
+  .qty-btn{background:var(--bg);border:1px solid var(--border);border-radius:6px;width:26px;height:26px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.9rem;color:var(--text)}
+  .qty-btn:hover{border-color:var(--accent);color:var(--accent)}
+  .qty-num{font-size:.9rem;font-weight:600;min-width:20px;text-align:center}
+  .remove-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.82rem;margin-left:4px}
+  .remove-btn:hover{color:var(--accent2)}
+  .cart-empty{text-align:center;color:var(--muted);padding:60px 20px;font-size:.95rem}
+  .cart-footer{margin-top:24px;padding-top:24px;border-top:1px solid var(--border)}
+  .cart-total{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+  .cart-total-label{font-size:.9rem;color:var(--muted)}
+  .cart-total-val{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700}
+  .checkout-btn{width:100%;background:var(--accent);color:#000;border:none;border-radius:10px;padding:16px;font-weight:700;font-size:1rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .2s;letter-spacing:.5px}
+  .checkout-btn:hover{background:#f0d060}
+  .paypal-btn{width:100%;background:#003087;color:#fff;border:none;border-radius:10px;padding:14px;font-weight:700;font-size:.9rem;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:10px;transition:background .2s}
+  .paypal-btn:hover{background:#002070}
+  .modal-overlay{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.8);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s}
+  .modal-overlay.open{opacity:1;pointer-events:all}
+  .modal{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:40px;width:90%;max-width:520px;max-height:90vh;overflow-y:auto}
+  .modal h2{font-family:'Playfair Display',serif;font-size:1.6rem;margin-bottom:28px}
+  .form-group{margin-bottom:18px}
+  .form-group label{display:block;font-size:.82rem;font-weight:600;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
+  .form-group input,.form-group select{width:100%;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.92rem;outline:none;transition:border-color .2s}
+  .form-group input:focus,.form-group select:focus{border-color:var(--accent)}
+  .form-group select option{background:var(--card)}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .success-screen{text-align:center;padding:20px 0}
+  .success-icon{font-size:4rem;margin-bottom:16px;animation:pop .5s ease}
+  @keyframes pop{0%{transform:scale(0)}80%{transform:scale(1.1)}100%{transform:scale(1)}}
+  .success-screen h3{font-family:'Playfair Display',serif;font-size:1.5rem;margin-bottom:10px}
+  .success-screen p{color:var(--muted);font-size:.9rem}
+  footer{background:var(--surface);border-top:1px solid var(--border);padding:60px 48px 32px}
+  .footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:48px}
+  .footer-brand .nav-logo{display:block;margin-bottom:14px;font-size:1.4rem}
+  .footer-brand p{color:var(--muted);font-size:.88rem;line-height:1.7;max-width:260px}
+  .footer-col h4{font-weight:700;margin-bottom:16px;font-size:.9rem}
+  .footer-col ul{list-style:none}
+  .footer-col ul li{margin-bottom:10px}
+  .footer-col ul a{color:var(--muted);text-decoration:none;font-size:.87rem;transition:color .2s}
+  .footer-col ul a:hover{color:var(--text)}
+  .footer-bottom{display:flex;justify-content:space-between;align-items:center;padding-top:24px;border-top:1px solid var(--border)}
+  .footer-bottom p{color:var(--muted);font-size:.82rem}
+  .payment-icons{display:flex;gap:10px}
+  .pay-icon{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:5px 12px;font-size:.75rem;font-weight:700;color:var(--muted)}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#22c55e;color:#fff;border-radius:10px;padding:12px 24px;font-weight:600;font-size:.9rem;z-index:500;transition:transform .35s cubic-bezier(.4,0,.2,1);white-space:nowrap;pointer-events:none}
+  .toast.show{transform:translateX(-50%) translateY(0)}
+  @media(max-width:768px){nav{padding:0 20px}.nav-links{display:none}.search-bar{display:none}.hero{padding:40px 20px}.hero-card-float{display:none}.hero-stats{gap:20px}section{padding:60px 20px}.promo-grid{grid-template-columns:1fr}.footer-grid{grid-template-columns:1fr 1fr}.cart-sidebar{width:100%;right:-100%}}
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-logo">ShopVerse</span>
+  <ul class="nav-links">
+    <li><a href="#products">Products</a></li>
+    <li><a href="#categories">Categories</a></li>
+    <li><a href="#offers">Offers</a></li>
+    <li><a href="#about">About</a></li>
+  </ul>
+  <div class="nav-actions">
+    <div class="search-bar">
+      <span>🔍</span>
+      <input type="text" placeholder="Search products..." id="searchInput" oninput="filterProducts()">
+    </div>
+    <button class="cart-btn" onclick="toggleCart()">🛒 Cart<span class="cart-count" id="cartCount">0</span></button>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-content">
+    <span class="hero-eyebrow">✦ New Season Arrivals</span>
+    <h1>Shop the <span>Future</span> of Retail</h1>
+    <p>Discover thousands of curated products from top brands. Secure payments via PayPal and more — shopping made effortless.</p>
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">Explore Products</button>
+      <button class="btn-secondary" onclick="document.getElementById('categories').scrollIntoView({behavior:'smooth'})">Browse Categories</button>
+    </div>
+    <div class="hero-stats">
+      <div><div class="stat-num">50K+</div><div class="stat-label">Products Listed</div></div>
+      <div><div class="stat-num">12K+</div><div class="stat-label">Happy Customers</div></div>
+      <div><div class="stat-num">99%</div><div class="stat-label">Secure Checkout</div></div>
+    </div>
+  </div>
+  <div class="hero-card-float hc1">
+    <svg class="hero-mini-svg" viewBox="0 0 175 108" xmlns="http://www.w3.org/2000/svg">
+      <rect width="175" height="108" fill="#0a1628"/>
+      <ellipse cx="87" cy="54" rx="38" ry="28" fill="none" stroke="#555" stroke-width="6"/>
+      <rect x="49" y="42" width="8" height="24" rx="4" fill="#1a1a2e"/>
+      <rect x="118" y="42" width="8" height="24" rx="4" fill="#1a1a2e"/>
+      <ellipse cx="53" cy="54" rx="8" ry="12" fill="#2a2a4e" stroke="#e8c547" stroke-width="1.5"/>
+      <ellipse cx="122" cy="54" rx="8" ry="12" fill="#2a2a4e" stroke="#e8c547" stroke-width="1.5"/>
+      <circle cx="53" cy="54" r="4" fill="#e8c547" opacity=".6"/>
+      <circle cx="122" cy="54" r="4" fill="#e8c547" opacity=".6"/>
+      <path d="M70 44 Q87 38 104 44" stroke="#777" stroke-width="2" fill="none"/>
+    </svg>
+    <div class="hero-mini-info"><div class="mini-title">Pro Headphones</div><div class="mini-price">₹5,799</div></div>
+  </div>
+  <div class="hero-card-float hc2">
+    <svg class="hero-mini-svg" viewBox="0 0 148 108" xmlns="http://www.w3.org/2000/svg">
+      <rect width="148" height="108" fill="#0d1117"/>
+      <rect x="44" y="18" width="60" height="72" rx="10" fill="#1c1c1e" stroke="#333" stroke-width="1.5"/>
+      <rect x="49" y="24" width="50" height="40" rx="4" fill="#0a84ff" opacity=".15"/>
+      <rect x="49" y="24" width="50" height="40" rx="4" fill="none" stroke="#0a84ff" stroke-width="1"/>
+      <text x="74" y="49" font-size="11" fill="#e8c547" font-family="monospace" text-anchor="middle">10:09</text>
+      <text x="74" y="60" font-size="6" fill="#888" font-family="sans-serif" text-anchor="middle">MON 12 APR</text>
+      <rect x="54" y="70" width="8" height="6" rx="2" fill="#333"/>
+      <rect x="64" y="70" width="8" height="6" rx="2" fill="#e8c547" opacity=".5"/>
+      <rect x="74" y="70" width="8" height="6" rx="2" fill="#333"/>
+      <rect x="84" y="70" width="8" height="6" rx="2" fill="#333"/>
+      <rect x="60" y="14" width="28" height="6" rx="3" fill="#222"/>
+      <rect x="60" y="88" width="28" height="4" rx="2" fill="#222"/>
+    </svg>
+    <div class="hero-mini-info"><div class="mini-title">SmartWatch X</div><div class="mini-price">₹12,999</div></div>
+  </div>
+  <div class="hero-card-float hc3">
+    <svg class="hero-mini-svg" viewBox="0 0 160 108" xmlns="http://www.w3.org/2000/svg">
+      <rect width="160" height="108" fill="#1a0a0a"/>
+      <ellipse cx="80" cy="70" rx="55" ry="20" fill="#ff4444" opacity=".08"/>
+      <path d="M30 75 Q55 40 90 38 Q120 36 135 55 Q145 65 138 75 Z" fill="#cc2200"/>
+      <path d="M30 75 Q55 42 88 40 Q116 38 132 56 Q140 66 134 74 Z" fill="#ff3300"/>
+      <path d="M30 75 Q52 52 84 50 Q110 48 126 60 Q134 67 130 73 Z" fill="#ff5533"/>
+      <ellipse cx="82" cy="45" rx="30" ry="8" fill="#ff2200" opacity=".4"/>
+      <path d="M52 73 Q80 68 118 70" stroke="white" stroke-width="1" fill="none" opacity=".3"/>
+      <circle cx="45" cy="74" r="12" fill="#222" stroke="#555" stroke-width="2"/>
+      <circle cx="45" cy="74" r="7" fill="#111" stroke="#666" stroke-width="1"/>
+      <circle cx="45" cy="74" r="3" fill="#888"/>
+      <circle cx="118" cy="72" r="12" fill="#222" stroke="#555" stroke-width="2"/>
+      <circle cx="118" cy="72" r="7" fill="#111" stroke="#666" stroke-width="1"/>
+      <circle cx="118" cy="72" r="3" fill="#888"/>
+      <path d="M28 73 L22 76 L28 77Z" fill="#ddd"/>
+      <rect x="14" y="74" width="14" height="3" rx="1" fill="#ccc"/>
+    </svg>
+    <div class="hero-mini-info"><div class="mini-title">Air Max Pro</div><div class="mini-price">₹8,499</div></div>
+  </div>
+</div>
+
+<section class="categories" id="categories">
+  <div class="section-header">
+    <div class="section-eyebrow">Browse By</div>
+    <h2 class="section-title">Shop Categories</h2>
+  </div>
+  <div class="cat-grid" id="catGrid"></div>
+</section>
+
+<section id="products">
+  <div class="section-header">
+    <div class="section-eyebrow">Featured</div>
+    <h2 class="section-title">Popular Products</h2>
+  </div>
+  <div class="filter-bar" id="filterBar"></div>
+  <div class="products-grid" id="productsGrid"></div>
+</section>
+
+<section class="promo-section" id="offers">
+  <div class="section-header">
+    <div class="section-eyebrow">Limited Time</div>
+    <h2 class="section-title">Exclusive Offers</h2>
+  </div>
+  <div class="promo-grid">
+    <div class="promo-card gold">
+      <svg class="promo-bg-svg" viewBox="0 0 600 220" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+        <rect width="600" height="220" fill="#0d0d1a"/>
+        <circle cx="480" cy="80" r="80" fill="#1a1a2e"/>
+        <rect x="380" y="60" width="160" height="100" rx="8" fill="#0d1117" stroke="#333" stroke-width="1"/>
+        <rect x="390" y="70" width="140" height="60" rx="4" fill="#001133" opacity=".8"/>
+        <text x="460" y="105" font-size="16" fill="#0a84ff" font-family="monospace" text-anchor="middle" opacity=".6">▶ ◼ ◀</text>
+        <ellipse cx="150" cy="120" rx="70" ry="50" fill="none" stroke="#333" stroke-width="8"/>
+        <ellipse cx="105" cy="120" rx="12" ry="18" fill="#1a1a2e" stroke="#555" stroke-width="2"/>
+        <ellipse cx="195" cy="120" rx="12" ry="18" fill="#1a1a2e" stroke="#555" stroke-width="2"/>
+        <rect x="280" y="80" width="30" height="60" rx="6" fill="#1c1c1e" stroke="#444"/>
+        <rect x="284" y="88" width="22" height="30" rx="3" fill="#0a84ff" opacity=".3"/>
+      </svg>
+      <div class="promo-overlay"></div>
+      <div class="promo-content">
+        <div class="promo-tag">⚡ Flash Sale</div>
+        <div class="promo-headline">Up to 50% Off Electronics</div>
+        <button class="promo-btn" onclick="setFilter('Electronics')">Shop Now →</button>
+      </div>
+    </div>
+    <div class="promo-card dark">
+      <svg class="promo-bg-svg" viewBox="0 0 600 220" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+        <rect width="600" height="220" fill="#1a0510"/>
+        <ellipse cx="420" cy="110" rx="120" ry="100" fill="#2a0820" opacity=".6"/>
+        <path d="M340 180 Q380 80 420 60 Q460 40 490 80 Q510 110 480 150 Q450 180 420 190 Z" fill="#8b1a4a" opacity=".4"/>
+        <path d="M360 175 Q395 90 430 72 Q462 55 488 90 Q506 116 478 152 Q452 178 424 186 Z" fill="#cc2266" opacity=".35"/>
+        <circle cx="200" cy="90" r="40" fill="#5a0d28" opacity=".5"/>
+        <rect x="160" y="120" width="80" height="10" rx="5" fill="#8b1a4a" opacity=".4"/>
+        <rect x="170" y="135" width="60" height="10" rx="5" fill="#8b1a4a" opacity=".3"/>
+        <path d="M100 160 Q150 100 200 90 Q240 82 270 110" stroke="#ff66aa" stroke-width="1.5" fill="none" opacity=".3"/>
+      </svg>
+      <div class="promo-overlay"></div>
+      <div class="promo-content">
+        <div class="promo-tag">👗 New Collection</div>
+        <div class="promo-headline">Summer Fashion Drops</div>
+        <button class="promo-btn" onclick="setFilter('Fashion')">Explore →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer id="about">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <span class="nav-logo">ShopVerse</span>
+      <p>An e-commerce platform where users buy products through a secure online platform. We connect buyers and sellers seamlessly with robust back-end data management and secure payment APIs like PayPal.</p>
+    </div>
+    <div class="footer-col"><h4>Company</h4><ul><li><a href="#">About Us</a></li><li><a href="#">Careers</a></li><li><a href="#">Press</a></li><li><a href="#">Blog</a></li></ul></div>
+    <div class="footer-col"><h4>Support</h4><ul><li><a href="#">Help Center</a></li><li><a href="#">Returns</a></li><li><a href="#">Track Order</a></li><li><a href="#">Contact Us</a></li></ul></div>
+    <div class="footer-col"><h4>Legal</h4><ul><li><a href="#">Privacy Policy</a></li><li><a href="#">Terms of Service</a></li><li><a href="#">Cookie Policy</a></li></ul></div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 ShopVerse. Web Development Minor Project.</p>
+    <div class="payment-icons"><span class="pay-icon">VISA</span><span class="pay-icon">MC</span><span class="pay-icon">PayPal</span><span class="pay-icon">UPI</span></div>
+  </div>
+</footer>
+
+<div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+<div class="cart-sidebar" id="cartSidebar">
+  <div class="cart-header"><span class="cart-title">Your Cart</span><button class="close-btn" onclick="toggleCart()">✕</button></div>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="cart-footer" id="cartFooter" style="display:none">
+    <div class="cart-total"><span class="cart-total-label">Total</span><span class="cart-total-val" id="cartTotal">₹0</span></div>
+    <button class="checkout-btn" onclick="openCheckout()">Proceed to Checkout →</button>
+    <button class="paypal-btn">🅿 Pay with PayPal</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay" onclick="closeCheckout(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div id="checkoutForm">
+      <h2>Checkout</h2>
+      <div class="form-group"><label>Full Name</label><input type="text" placeholder="Rahul Sharma" id="fname"></div>
+      <div class="form-group"><label>Email Address</label><input type="email" placeholder="rahul@example.com" id="femail"></div>
+      <div class="form-row">
+        <div class="form-group"><label>Phone</label><input type="tel" placeholder="+91 9876543210"></div>
+        <div class="form-group"><label>PIN Code</label><input type="text" placeholder="110001"></div>
+      </div>
+      <div class="form-group"><label>Delivery Address</label><input type="text" placeholder="House / Flat / Street"></div>
+      <div class="form-row">
+        <div class="form-group"><label>City</label><input type="text" placeholder="New Delhi"></div>
+        <div class="form-group"><label>State</label><select><option>Delhi</option><option>Maharashtra</option><option>Karnataka</option><option>Tamil Nadu</option><option>Uttar Pradesh</option></select></div>
+      </div>
+      <div class="form-group"><label>Payment Method</label><select><option>Credit / Debit Card</option><option>PayPal</option><option>UPI</option><option>Net Banking</option><option>Cash on Delivery</option></select></div>
+      <button class="checkout-btn" onclick="placeOrder()" style="margin-top:8px">Place Order</button>
+    </div>
+    <div id="successScreen" class="success-screen" style="display:none">
+      <div class="success-icon">✅</div>
+      <h3>Order Placed!</h3>
+      <p>Thank you! Your order has been confirmed.<br>You'll receive a confirmation email shortly.</p>
+      <button class="btn-primary" style="margin-top:24px" onclick="closeCheckout(null,true)">Continue Shopping</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ── SVG illustrations for each product ──────────────────────────────────────
+const SVG = {
+  headphones: `<svg viewBox="0 0 280 230" xmlns="http://www.w3.org/2000/svg">
+    <rect width="280" height="230" fill="#0a1628"/>
+    <radialGradient id="hg" cx="50%" cy="40%" r="60%"><stop offset="0%" stop-color="#1a2a4a"/><stop offset="100%" stop-color="#050d1a"/></radialGradient>
+    <rect width="280" height="230" fill="url(#hg)"/>
+    <ellipse cx="140" cy="110" rx="75" ry="55" fill="none" stroke="#2a3a5a" stroke-width="10"/>
+    <rect x="65" y="88" width="16" height="44" rx="8" fill="#0d1a2e"/>
+    <rect x="199" y="88" width="16" height="44" rx="8" fill="#0d1a2e"/>
+    <ellipse cx="73" cy="110" rx="16" ry="24" fill="#1a2a4e" stroke="#e8c547" stroke-width="2"/>
+    <ellipse cx="207" cy="110" rx="16" ry="24" fill="#1a2a4e" stroke="#e8c547" stroke-width="2"/>
+    <circle cx="73" cy="110" r="8" fill="#e8c547" opacity=".7"/>
+    <circle cx="207" cy="110" r="8" fill="#e8c547" opacity=".7"/>
+    <circle cx="73" cy="110" r="3" fill="#fff"/>
+    <circle cx="207" cy="110" r="3" fill="#fff"/>
+    <path d="M100 85 Q140 65 180 85" stroke="#4a5a7a" stroke-width="3" fill="none"/>
+    <line x1="140" y1="110" x2="148" y2="118" stroke="#e8c547" stroke-width="1.5" opacity=".4"/>
+    <line x1="148" y1="118" x2="144" y2="126" stroke="#e8c547" stroke-width="1.5" opacity=".4"/>
+    <text x="140" y="185" font-size="11" fill="#e8c547" font-family="sans-serif" text-anchor="middle" opacity=".5">NOISE CANCELLING</text>
+  </svg>`,
+
+  smartwatch: `<svg viewBox="0 0 280 230" xmlns="http://www.w3.org/2000/svg">
+    <rect width="280" height="230" fill="#0d0d12"/>
+    <radialGradient id="wg" cx="50%" cy="50%" r="55%"><stop offset="0%" stop-color="#1a1a24"/><stop offset="100%" stop-color="#050508"/></radialGradient>
+    <rect width="280" height="230" fill="url(#wg)"/>
+    <rect x="110" y="22" width="60" height="12" rx="6" fill="#1a1a24" stroke="#333"/>
+    <rect x="86" y="34" width="108" height="162" rx="20" fill="#1c1c20" stroke="#3a3a44" stroke-width="2"/>
+    <rect x="86" y="34" width="108" height="162" rx="20" fill="url(#wg)" opacity=".5"/>
+    <rect x="93" y="44" width="94" height="142" rx="14" fill="#000" stroke="#222"/>
+    <rect x="93" y="44" width="94" height="142" rx="14" fill="#0a0a1a"/>
+    <circle cx="140" cy="115" r="40" fill="none" stroke="#1a1a3a" stroke-width="1"/>
+    <circle cx="140" cy="115" r="34" fill="none" stroke="#252540" stroke-width="6"/>
+    <path d="M140 81 L140 92" stroke="#e8c547" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M140 138 L140 149" stroke="#555" stroke-width="2" stroke-linecap="round"/>
+    <path d="M106 115 L117 115" stroke="#555" stroke-width="2" stroke-linecap="round"/>
+    <path d="M163 115 L174 115" stroke="#555" stroke-width="2" stroke-linecap="round"/>
+    <path d="M140 115 L140 98" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M140 115 L153 115" stroke="#e8c547" stroke-width="2.5" stroke-linecap="round"/>
+    <circle cx="140" cy="115" r="3" fill="#fff"/>
+    <text x="140" y="144" font-size="9" fill="#888" font-family="monospace" text-anchor="middle">MON 12 APR</text>
+    <text x="140" y="76" font-size="8" fill="#e8c547" font-family="monospace" text-anchor="middle" opacity=".6">❤ 72 BPM</text>
+    <rect x="110" y="196" width="60" height="12" rx="6" fill="#1a1a24" stroke="#333"/>
+    <rect x="272" y="80" width="8" height="30" rx="4" fill="#333"/>
+    <rect x="272" y="118" width="8" height="20" rx="4" fill="#333"/>
+  </svg>`,
+
+  shoes: `<svg viewBox="0 0 280 230" xmlns="http://www.w3.org/2000/svg">
+    <rect width="280" height="230" fill="#1a0505"/>
+    <radialGradient id="sg" cx="40%" cy="60%" r="70%"><stop offset="0%" stop-color="#2a0808"/><stop offset="100%" stop-color="#0d0202"/></radialGradient>
+    <rect width="280" height="230" fill="url(#sg)"/>
+    <path d="M40 155 Q80 80 130 72 Q170 65 200 90 Q230 108 240 135 Q248 155 220 162 Q180 170 120 168 Q70 167 50 162 Z" fill="#cc1a00"/>
+    <path d="M40 155 Q78 86 126 78 Q164 72 195 95 Q223 113 233 137 Q240 155 216 160 Q178 167 118 165 Q70 164 50 160 Z" fill="#ee2200"/>
+    <path d="M40 155 Q76 92 122 84 Q158 78 188 100 Q214 118 224 140 Q230 156 208 158 Q172 164 114 162 Q68 161 50 158 Z" fill="#ff3311"/>
+    <path d="M95 155 Q140 148 200 152" stroke="white" stroke-width="1.5" fill="none" opacity=".3"/>
+    <path d="M80 148 Q100 130 130 125 Q160 120 185 132" stroke="white" stroke-width="1" fill="none" opacity=".2"/>
+    <path d="M110 125 L118 115 M125 120 L132 110 M140 118 L146 108 M155 120 L160 110" stroke="white" stroke-width="1" opacity=".25"/>
+    <ellipse cx="60" cy="157" rx="20" ry="8" fill="#222" stroke="#444" stroke-width="1.5"/>
+    <ellipse cx="60" cy="157" rx="12" ry="5" fill="#111" stroke="#555"/>
+    <ellipse cx="60" cy="157" rx="5" ry="2.5" fill="#555"/>
+    <ellipse cx="205" cy="153" rx="20" ry="8" fill="#222" stroke="#444" stroke-width="1.5"/>
+    <ellipse cx="205" cy="153" rx="12" ry="5" fill="#111" stroke="#555"/>
+    <path d="M36 152 L28 156 L38 158 Z" fill="#ddd"/>
+    <rect x="16" y="154" width="22" height="4" rx="2" fill="#ccc"/>
+    <text x="140" y="195" font-size="10" fill="#ff5533" font-family="sans-serif" text-anchor="middle" opacity=".5">AIR MAX PRO</text>
+  </svg>`,
+
+  tv: `<svg viewBox="0 0 280 230" xmlns="http://www.w3.org/2000/svg">
+    <rect width="280" height="230" fill="#050810"/>
+    <rect x="20" y="25" width="240" height="150" rx="8" fill="#111" stroke="#2a2a3a" stroke-width="2"/>
+    <rect x="26" y="31" width="228" height="138" rx="5" fill="#000d1a"/>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#001133"/><stop offset="100%" stop-color="#002244"/></linearGradient>
+    <rect x="26" y="31" width="228" height="100" fill="url(#sky)"/>
+    <rect x="26" y="131" width="228" height="38" fill="#001100"/>
+    <path d="M26 131 Q80 115 140 118 Q200 121 254 131" fill="#003300" stroke="none"/>
+    <circle cx="60" cy="85" r="25" fill="#ffcc00" opacity=".9"/>
+    <circle cx="60" cy="85" r="20" fill="#ffdd44"/>
+    <path d="M140 100 L200 90 L220 108 L260 95 L254 131 L26 131 L26 118 Z" fill="#004400"/>
+    <path d="M26 118 L80 108 L120 115 L160 105 L200 110 L240 100 L254 131 L26 131 Z" fill="#006600"/>
+    <path d="M26 124 L90 116 L130 122 L180 112 L220 118 L254 124 L254 131 L26 131 Z" fill="#008800"/>
+    <rect x="20" y="175" width="240" height="6" rx="3" fill="#0a0a14" stroke="#1a1a24"/>
+    <rect x="118" y="181" width="44" height="18" rx="3" fill="#111" stroke="#222"/>
+    <rect x="80" y="199" width="120" height="6" rx="3" fill="#0d0d18" stroke="#1a1a24"/>
+    <circle cx="240" cy="40" r="3" fill="#e8c547" opacity=".6"/>
+    <text x="140" y="72" font-size="8" fill="#ffffff" font-family="sans-serif" text-anchor="middle" opacity=".2">4K ULTRA HD</text>
+  </svg>`,
+
+  bag: `<svg viewBox="0 0 280 230" xmlns="http://www.w3.org/2000/svg">
+    <rect width="280" height="230" fill="#1a0f05"/>
+    <radialGradient id="bg2" cx="50%" cy="40%" r="60%"><stop offset="0%" stop-color="#2a1a08"/><stop offset="100%" stop-color="#0d0804"/></radialGradient>
+    <rect width="280" height="230" fill="url(#bg2)"/>
+    <path d="M100 90 Q100 70 140 70 Q180 70 180 90" stroke="#8b6914" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <rect x="70" y="88" width="140" height="105" rx="12" fill="#8b4513"/>
+    <rect x="70" y="88" width="140" height="105" rx="12" fill="none" stroke="#6b3410" stroke-width="2"/>
+    <path d="M72 88 Q80 80 140 78 Q200 80 208 88" fill="#a0521a"/>
+    <rect x="70" y="88" width="140" height="30" rx="0" fill="#9b4a15" opacity=".5"/>
+    <rect x="70" y="116" width="140" height="2" fill="#6b3410"/>
+    <rect x="118" y="122" width="44" height="26" rx="4" fill="#7a3d12"/>
+    <rect x="118" y="122" width="44" height="26" rx="4" fill="none" stroke="#5a2d0e" stroke-width="1.5"/>
+    <rect x="126" y="130" width="12" height="10" rx="2" fill="#c8941e"/>
+    <rect x="142" y="130" width="12" height="10" rx="2" fill="#c8941e"/>
+    <circle cx="140" cy="135" r="3" fill="#e8c547"/>
+    <path d="M80 118 L80 185 Q80 193 88 193 L80 193" stroke="#6b3410" stroke-width="1" fill="none"/>
+    <path d="M200 118 L200 185 Q200 193 192 193 L200 193" stroke="#6b3410" stroke-width="1" fill="none"/>
+    <path d="M82 110 Q90 106 98 110" stroke="#c8941e" stroke-width="1" fill="none" opacity=".4"/>
+    <path d="M182 110 Q190 106 198 110" stroke="#c8941e" stroke-width="1" fill="none" opacity=".4"/>
+    <text x="140" y="213" font-size="9" fill="#c8941e" font-family="sans-serif" text-anchor="middle" opacity=".5">GENUINE LEATHER</text>
+  </svg>`,
+
+  yogamat: `<svg viewBox="0 0 280 230" xmlns="http://www.w3.org/2000/svg">
+    <rect width="280" height="230" fill="#051a10"/>
+    <radialGradient id="yg" cx="50%" cy="50%" r="60%"><stop offset="0%" stop-color="#0a2a18"/><stop offset="100%" stop-color="#020d08"/></radialGradient>
+    <rect width="280" height="230" fill="url(#yg)"/>
+    <path d="M30 80 Q40 75 250 85 Q260 85 260 90 L260 160 Q260 165 250 165 Q40 155 30 150 Z" fill="#1a5a30"/>
+    <path d="M30 80 Q140 77 250 85 Q140 84 30 80Z" fill="#2a7a44"/>
+    <path d="M30 80 Q40 75 250 85 L250 92 Q40 82 30 87 Z" fill="#22693a"/>
+    <line x1="60" y1="78" x2="62" y2="163" stroke="#2a7a44" stroke-width="1.5" opacity=".4"/>
+    <line x1="90" y1="79" x2="92" y2="163" stroke="#2a7a44" stroke-width="1.5" opacity=".4"/>
+    <line x1="120" y1="80" x2="122" y2="163" stroke="#2a7a44" stroke-width="1.5" opacity=".4"/>
+    <line x1="150" y1="81" x2="152" y2="163" stroke="#2a7a44" stroke-width="1.5" opacity=".4"/>
+    <line x1="180" y1="82" x2="182" y2="163" stroke="#2a7a44" stroke-width="1.5" opacity=".4"/>
+    <line x1="210" y1="83" x2="212" y2="163" stroke="#2a7a44" stroke-width="1.5" opacity=".4"/>
+    <path d="M30 100 Q250 109 260 110" stroke="#2a7a44" stroke-width="1" fill="none" opacity=".3"/>
+    <path d="M30 120 Q250 129 260 130" stroke="#2a7a44" stroke-width="1" fill="none" opacity=".3"/>
+    <path d="M30 140 Q250 149 260 150" stroke="#2a7a44" stroke-width="1" fill="none" opacity=".3"/>
+    <ellipse cx="30" cy="115" rx="8" ry="40" fill="#0d3a1e"/>
+    <ellipse cx="260" cy="122" rx="8" ry="40" fill="#0d3a1e"/>
+    <path d="M20 80 Q24 73 30 80 L30 155 Q24 160 20 153 Z" fill="#0a2a14"/>
+    <text x="140" y="196" font-size="9" fill="#22cc66" font-family="sans-serif" text-anchor="middle" opacity=".5">NON-SLIP • ECO FRIENDLY</text>
+  </svg>`,
+
+  book: `<svg viewBox="0 0 280 230" xmlns="http://www.w3.org/2000/svg">
+    <rect width="280" height="230" fill="#08080d"/>
+    <rect x="55" y="30" width="130" height="170" rx="4" fill="#1a3a5c"/>
+    <rect x="55" y="30" width="18" height="170" rx="2" fill="#0d2a44"/>
+    <rect x="73" y="30" width="112" height="170" rx="0" fill="#1e4060"/>
+    <rect x="73" y="30" width="112" height="170" rx="0" fill="none" stroke="#2a5070" stroke-width="1"/>
+    <rect x="80" y="42" width="98" height="4" rx="2" fill="#e8c547" opacity=".8"/>
+    <rect x="90" y="52" width="78" height="3" rx="1.5" fill="#aac4de" opacity=".6"/>
+    <rect x="85" y="70" width="88" height="55" rx="3" fill="#0d2a44" opacity=".5"/>
+    <line x1="88" y1="78" x2="168" y2="78" stroke="#4a7a9a" stroke-width="1.5" opacity=".5"/>
+    <line x1="88" y1="86" x2="165" y2="86" stroke="#4a7a9a" stroke-width="1" opacity=".4"/>
+    <line x1="88" y1="93" x2="160" y2="93" stroke="#4a7a9a" stroke-width="1" opacity=".4"/>
+    <line x1="88" y1="100" x2="163" y2="100" stroke="#4a7a9a" stroke-width="1" opacity=".4"/>
+    <line x1="88" y1="107" x2="156" y2="107" stroke="#4a7a9a" stroke-width="1" opacity=".4"/>
+    <line x1="88" y1="114" x2="161" y2="114" stroke="#4a7a9a" stroke-width="1" opacity=".4"/>
+    <text x="127" y="148" font-size="8" fill="#e8c547" font-family="serif" text-anchor="middle" opacity=".7">THE PSYCHOLOGY</text>
+    <text x="127" y="158" font-size="8" fill="#e8c547" font-family="serif" text-anchor="middle" opacity=".7">OF MONEY</text>
+    <text x="127" y="172" font-size="7" fill="#aac4de" font-family="sans-serif" text-anchor="middle" opacity=".5">Morgan Housel</text>
+    <rect x="185" y="30" width="40" height="170" rx="2" fill="#142a42"/>
+    <rect x="195" y="30" width="30" height="170" rx="0" fill="#1a3254" opacity=".6"/>
+    <rect x="205" y="30" width="20" height="170" rx="0" fill="#0d2240" opacity=".4"/>
+    <rect x="55" y="200" width="130" height="6" rx="2" fill="#0a1e32"/>
+  </svg>`,
+
+  instantpot: `<svg viewBox="0 0 280 230" xmlns="http://www.w3.org/2000/svg">
+    <rect width="280" height="230" fill="#0d0d0d"/>
+    <ellipse cx="140" cy="155" rx="90" ry="20" fill="#111" opacity=".5"/>
+    <rect x="54" y="75" width="172" height="105" rx="12" fill="#1a1a1a"/>
+    <rect x="54" y="75" width="172" height="105" rx="12" fill="none" stroke="#2a2a2a" stroke-width="2"/>
+    <rect x="54" y="75" width="172" height="40" rx="12" fill="#222" stroke="#333"/>
+    <rect x="60" y="80" width="160" height="28" rx="8" fill="#1a1a1a"/>
+    <ellipse cx="140" cy="115" rx="65" ry="65" fill="#1e1e1e" stroke="#2a2a2a" stroke-width="2"/>
+    <ellipse cx="140" cy="115" rx="58" ry="58" fill="#161616" stroke="#333" stroke-width="1"/>
+    <circle cx="140" cy="115" r="48" fill="none" stroke="#222" stroke-width="8"/>
+    <path d="M140 67 L140 78" stroke="#e8c547" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M140 152 L140 163" stroke="#444" stroke-width="2" stroke-linecap="round"/>
+    <path d="M103 78 L109 87" stroke="#444" stroke-width="2" stroke-linecap="round"/>
+    <path d="M171 143 L177 152" stroke="#444" stroke-width="2" stroke-linecap="round"/>
+    <path d="M92 115 L103 115" stroke="#444" stroke-width="2" stroke-linecap="round"/>
+    <path d="M177 115 L188 115" stroke="#444" stroke-width="2" stroke-linecap="round"/>
+    <path d="M140 115 L140 95" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+    <path d="M140 115 L155 108" stroke="#e8c547" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="140" cy="115" r="4" fill="#e8c547"/>
+    <rect x="80" y="85" width="40" height="12" rx="3" fill="#111"/>
+    <text x="100" y="95" font-size="7" fill="#e8c547" font-family="monospace" text-anchor="middle">RICE</text>
+    <rect x="160" y="85" width="40" height="12" rx="3" fill="#111"/>
+    <text x="180" y="95" font-size="7" fill="#e8c547" font-family="monospace" text-anchor="middle">STEAM</text>
+    <path d="M118 42 Q118 28 126 22 Q130 18 132 22 Q128 30 130 42" stroke="#88aaff" stroke-width="1.5" fill="none" opacity=".4"/>
+    <path d="M140 38 Q140 24 148 18 Q152 14 154 18 Q150 26 152 38" stroke="#88aaff" stroke-width="1.5" fill="none" opacity=".4"/>
+    <path d="M162 42 Q162 28 170 22 Q174 18 176 22 Q172 30 174 42" stroke="#88aaff" stroke-width="1.5" fill="none" opacity=".4"/>
+  </svg>`,
+
+  speaker: `<svg viewBox="0 0 280 230" xmlns="http://www.w3.org/2000/svg">
+    <rect width="280" height="230" fill="#0a0a0f"/>
+    <radialGradient id="spg" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#141420"/><stop offset="100%" stop-color="#060608"/></radialGradient>
+    <rect width="280" height="230" fill="url(#spg)"/>
+    <rect x="80" y="40" width="120" height="160" rx="18" fill="#111118" stroke="#1e1e2a" stroke-width="2"/>
+    <rect x="86" y="46" width="108" height="148" rx="14" fill="#0d0d14"/>
+    <circle cx="140" cy="98" r="40" fill="#111" stroke="#1a1a22" stroke-width="2"/>
+    <circle cx="140" cy="98" r="34" fill="none" stroke="#222230" stroke-width="6"/>
+    <circle cx="140" cy="98" r="28" fill="#0a0a10" stroke="#1a1a22" stroke-width="2"/>
+    <circle cx="140" cy="98" r="20" fill="none" stroke="#252535" stroke-width="4"/>
+    <circle cx="140" cy="98" r="12" fill="#050508" stroke="#303040" stroke-width="2"/>
+    <circle cx="140" cy="98" r="5" fill="#e8c547" opacity=".8"/>
+    <circle cx="140" cy="98" r="2" fill="#fff"/>
+    <rect x="110" y="152" width="60" height="28" rx="8" fill="#0d0d14" stroke="#1e1e2a"/>
+    <circle cx="125" cy="166" r="8" fill="#0a0a10" stroke="#252535" stroke-width="2"/>
+    <circle cx="125" cy="166" r="4" fill="#111"/>
+    <circle cx="155" cy="166" r="8" fill="#0a0a10" stroke="#252535" stroke-width="2"/>
+    <circle cx="155" cy="166" r="4" fill="#111"/>
+    <circle cx="140" cy="56" r="4" fill="#e8c547" opacity=".7"/>
+    <rect x="120" y="185" width="40" height="4" rx="2" fill="#1a1a24"/>
+    <text x="140" y="215" font-size="9" fill="#e8c547" font-family="sans-serif" text-anchor="middle" opacity=".4">360° SURROUND</text>
+  </svg>`,
+
+  serum: `<svg viewBox="0 0 280 230" xmlns="http://www.w3.org/2000/svg">
+    <rect width="280" height="230" fill="#0a0518"/>
+    <radialGradient id="serg" cx="50%" cy="30%" r="60%"><stop offset="0%" stop-color="#1a0a2e"/><stop offset="100%" stop-color="#05020c"/></radialGradient>
+    <rect width="280" height="230" fill="url(#serg)"/>
+    <ellipse cx="140" cy="185" rx="32" ry="8" fill="#220a44" opacity=".5"/>
+    <rect x="120" y="85" width="40" height="100" rx="8" fill="#1a0a30"/>
+    <rect x="120" y="85" width="40" height="100" rx="8" fill="none" stroke="#4a2a6a" stroke-width="1.5"/>
+    <rect x="122" y="87" width="36" height="96" rx="6" fill="none" stroke="#6a3a8a" stroke-width=".5" opacity=".4"/>
+    <linearGradient id="liquid" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#aa44ff" stop-opacity=".6"/><stop offset="100%" stop-color="#6600cc" stop-opacity=".8"/></linearGradient>
+    <rect x="124" y="120" width="32" height="63" rx="4" fill="url(#liquid)"/>
+    <rect x="128" y="75" width="24" height="14" rx="6" fill="#2a1040" stroke="#5a3080" stroke-width="1.5"/>
+    <rect x="134" y="62" width="12" height="18" rx="4" fill="#1a0830" stroke="#4a2060"/>
+    <rect x="136" y="55" width="8" height="10" rx="3" fill="#110620"/>
+    <text x="140" y="108" font-size="7" fill="#cc88ff" font-family="sans-serif" text-anchor="middle" opacity=".8">VIT C</text>
+    <text x="140" y="117" font-size="6" fill="#9966cc" font-family="sans-serif" text-anchor="middle" opacity=".6">SERUM</text>
+    <circle cx="115" cy="130" r="3" fill="#aa44ff" opacity=".3"/>
+    <circle cx="168" cy="150" r="2" fill="#aa44ff" opacity=".2"/>
+    <circle cx="110" cy="165" r="4" fill="#aa44ff" opacity=".15"/>
+    <circle cx="170" cy="120" r="2.5" fill="#cc66ff" opacity=".25"/>
+    <text x="140" y="215" font-size="8" fill="#9944cc" font-family="sans-serif" text-anchor="middle" opacity=".5">BRIGHTENING FORMULA</text>
+  </svg>`,
+
+  keyboard: `<svg viewBox="0 0 280 230" xmlns="http://www.w3.org/2000/svg">
+    <rect width="280" height="230" fill="#080810"/>
+    <rect x="20" y="75" width="240" height="110" rx="10" fill="#111118" stroke="#1e1e28" stroke-width="2"/>
+    <rect x="26" y="81" width="228" height="98" rx="7" fill="#0d0d14"/>
+    <rect x="32" y="88" width="216" height="16" rx="3" fill="#111"/>
+    <rect x="32" y="88" width="216" height="16" rx="3" fill="none" stroke="#1a1a24"/>
+    <g fill="#151520" stroke="#222230" stroke-width="1">
+      <rect x="35" y="90" width="14" height="12" rx="2"/><rect x="52" y="90" width="14" height="12" rx="2"/>
+      <rect x="69" y="90" width="14" height="12" rx="2"/><rect x="86" y="90" width="14" height="12" rx="2"/>
+      <rect x="103" y="90" width="14" height="12" rx="2"/><rect x="120" y="90" width="14" height="12" rx="2"/>
+      <rect x="137" y="90" width="14" height="12" rx="2"/><rect x="154" y="90" width="14" height="12" rx="2"/>
+      <rect x="171" y="90" width="14" height="12" rx="2"/><rect x="188" y="90" width="14" height="12" rx="2"/>
+      <rect x="205" y="90" width="14" height="12" rx="2"/><rect x="222" y="90" width="22" height="12" rx="2"/>
+    </g>
+    <g fill="#151520" stroke="#222230" stroke-width="1">
+      <rect x="35" y="106" width="20" height="12" rx="2"/><rect x="58" y="106" width="14" height="12" rx="2"/>
+      <rect x="75" y="106" width="14" height="12" rx="2"/><rect x="92" y="106" width="14" height="12" rx="2"/>
+      <rect x="109" y="106" width="14" height="12" rx="2"/><rect x="126" y="106" width="14" height="12" rx="2"/>
+      <rect x="143" y="106" width="14" height="12" rx="2"/><rect x="160" y="106" width="14" height="12" rx="2"/>
+      <rect x="177" y="106" width="14" height="12" rx="2"/><rect x="194" y="106" width="14" height="12" rx="2"/>
+      <rect x="211" y="106" width="33" height="12" rx="2"/>
+    </g>
+    <g fill="#151520" stroke="#222230" stroke-width="1">
+      <rect x="35" y="122" width="26" height="12" rx="2"/><rect x="64" y="122" width="14" height="12" rx="2"/>
+      <rect x="81" y="122" width="14" height="12" rx="2"/><rect x="98" y="122" width="14" height="12" rx="2"/>
+      <rect x="115" y="122" width="14" height="12" rx="2"/><rect x="132" y="122" width="14" height="12" rx="2"/>
+      <rect x="149" y="122" width="14" height="12" rx="2"/><rect x="166" y="122" width="14" height="12" rx="2"/>
+      <rect x="183" y="122" width="14" height="12" rx="2"/><rect x="200" y="122" width="44" height="12" rx="2"/>
+    </g>
+    <rect x="35" y="138" width="32" height="12" rx="2" fill="#151520" stroke="#222230"/>
+    <rect x="70" y="138" width="140" height="12" rx="2" fill="#1a1a26" stroke="#2a2a36"/>
+    <rect x="213" y="138" width="31" height="12" rx="2" fill="#151520" stroke="#222230"/>
+    <rect x="35" y="90" width="14" height="12" rx="2" fill="#1a0a2e" stroke="#4a2a6a"/>
+    <rect x="52" y="90" width="14" height="12" rx="2" fill="#0a1a2e" stroke="#2a4a6a"/>
+    <rect x="69" y="90" width="14" height="12" rx="2" fill="#0a2a1e" stroke="#2a6a4a"/>
+    <rect x="86" y="90" width="14" height="12" rx="2" fill="#2a1a0a" stroke="#6a4a2a"/>
+    <circle cx="42" cy="96" r="2" fill="#cc44ff" opacity=".8"/>
+    <circle cx="59" cy="96" r="2" fill="#44aaff" opacity=".8"/>
+    <circle cx="76" cy="96" r="2" fill="#44ffaa" opacity=".8"/>
+    <circle cx="93" cy="96" r="2" fill="#ffcc44" opacity=".8"/>
+    <text x="140" y="210" font-size="9" fill="#6644aa" font-family="sans-serif" text-anchor="middle" opacity=".5">RGB MECHANICAL</text>
+  </svg>`,
+
+  lego: `<svg viewBox="0 0 280 230" xmlns="http://www.w3.org/2000/svg">
+    <rect width="280" height="230" fill="#0a0508"/>
+    <radialGradient id="lg" cx="50%" cy="40%" r="70%"><stop offset="0%" stop-color="#1a0a18"/><stop offset="100%" stop-color="#050308"/></radialGradient>
+    <rect width="280" height="230" fill="url(#lg)"/>
+    <rect x="40" y="120" width="60" height="40" rx="3" fill="#cc1111"/>
+    <rect x="40" y="120" width="60" height="40" rx="3" fill="none" stroke="#991111" stroke-width="1.5"/>
+    <circle cx="56" cy="116" r="8" fill="#dd2222" stroke="#aa1111" stroke-width="1.5"/>
+    <circle cx="74" cy="116" r="8" fill="#dd2222" stroke="#aa1111" stroke-width="1.5"/>
+    <circle cx="92" cy="116" r="8" fill="#dd2222" stroke="#aa1111" stroke-width="1.5"/>
+    <rect x="105" y="100" width="60" height="60" rx="3" fill="#f5d800"/>
+    <rect x="105" y="100" width="60" height="60" rx="3" fill="none" stroke="#c8b000" stroke-width="1.5"/>
+    <circle cx="121" cy="96" r="8" fill="#f5d800" stroke="#c8b000" stroke-width="1.5"/>
+    <circle cx="139" cy="96" r="8" fill="#f5d800" stroke="#c8b000" stroke-width="1.5"/>
+    <circle cx="157" cy="96" r="8" fill="#f5d800" stroke="#c8b000" stroke-width="1.5"/>
+    <rect x="170" y="85" width="70" height="50" rx="3" fill="#1155cc"/>
+    <rect x="170" y="85" width="70" height="50" rx="3" fill="none" stroke="#0033aa" stroke-width="1.5"/>
+    <circle cx="186" cy="81" r="8" fill="#2266dd" stroke="#0033aa" stroke-width="1.5"/>
+    <circle cx="204" cy="81" r="8" fill="#2266dd" stroke="#0033aa" stroke-width="1.5"/>
+    <circle cx="222" cy="81" r="8" fill="#2266dd" stroke="#0033aa" stroke-width="1.5"/>
+    <rect x="60" y="160" width="50" height="35" rx="3" fill="#11aa33"/>
+    <rect x="60" y="160" width="50" height="35" rx="3" fill="none" stroke="#008822" stroke-width="1.5"/>
+    <circle cx="76" cy="156" r="8" fill="#22bb44" stroke="#008822" stroke-width="1.5"/>
+    <circle cx="94" cy="156" r="8" fill="#22bb44" stroke="#008822" stroke-width="1.5"/>
+    <rect x="140" y="145" width="55" height="50" rx="3" fill="#ff6600"/>
+    <rect x="140" y="145" width="55" height="50" rx="3" fill="none" stroke="#cc4400" stroke-width="1.5"/>
+    <circle cx="156" cy="141" r="8" fill="#ff7722" stroke="#cc4400" stroke-width="1.5"/>
+    <circle cx="174" cy="141" r="8" fill="#ff7722" stroke="#cc4400" stroke-width="1.5"/>
+  </svg>`
+};
+
+// Category SVGs
+const CAT_SVG = {
+  Electronics: `<svg viewBox="0 0 300 90" xmlns="http://www.w3.org/2000/svg"><rect width="300" height="90" fill="#050d1a"/><rect x="20" y="15" width="120" height="60" rx="5" fill="#0d1a2e" stroke="#1a2a3e"/><rect x="25" y="20" width="110" height="46" rx="3" fill="#001133" opacity=".8"/><text x="80" y="48" font-size="14" fill="#0a84ff" font-family="monospace" text-anchor="middle" opacity=".7">▶ ◀</text><ellipse cx="210" cy="45" rx="30" ry="22" fill="none" stroke="#333" stroke-width="5"/><ellipse cx="185" cy="45" rx="9" ry="14" fill="#1a1a2e" stroke="#444"/><ellipse cx="235" cy="45" rx="9" ry="14" fill="#1a1a2e" stroke="#444"/></svg>`,
+  Fashion: `<svg viewBox="0 0 300 90" xmlns="http://www.w3.org/2000/svg"><rect width="300" height="90" fill="#1a0510"/><path d="M60 25 Q80 15 100 25 L115 50 L85 55 L85 80 L75 80 L75 55 L45 50 Z" fill="#8b1a4a"/><path d="M60 25 Q80 15 100 25 L115 50 L85 55 L85 80 L75 80 L75 55 L45 50 Z" fill="none" stroke="#cc2266" stroke-width="1"/><path d="M170 30 Q185 15 200 30 L210 55 L170 55 L130 55 L140 30 Z" fill="#cc1155"/><rect x="162" y="55" width="46" height="25" rx="2" fill="#8b1a4a"/></svg>`,
+  'Home & Living': `<svg viewBox="0 0 300 90" xmlns="http://www.w3.org/2000/svg"><rect width="300" height="90" fill="#0d0d05"/><path d="M80 60 L80 30 L140 10 L200 30 L200 60 Z" fill="#2a2a10" stroke="#4a4a20"/><rect x="95" y="38" width="30" height="22" rx="2" fill="#3a3a18"/><rect x="138" y="42" width="22" height="18" rx="1" fill="#2a2a10" stroke="#5a5a28"/><path d="M60 60 L220 60" stroke="#4a4a20" stroke-width="3"/><rect x="50" y="58" width="200" height="10" rx="2" fill="#1a1a08"/></svg>`,
+  Books: `<svg viewBox="0 0 300 90" xmlns="http://www.w3.org/2000/svg"><rect width="300" height="90" fill="#08080d"/><rect x="30" y="15" width="50" height="65" rx="2" fill="#1a3a5c" stroke="#2a4a6c"/><rect x="30" y="15" width="8" height="65" fill="#0d2a44"/><rect x="88" y="20" width="50" height="60" rx="2" fill="#5c1a1a" stroke="#6c2a2a"/><rect x="88" y="20" width="8" height="60" fill="#441010"/><rect x="145" y="10" width="60" height="70" rx="2" fill="#1a5c1a" stroke="#2a6c2a"/><rect x="145" y="10" width="8" height="70" fill="#0a440a"/><rect x="212" y="18" width="50" height="62" rx="2" fill="#5c5c1a" stroke="#6c6c2a"/></svg>`,
+  Sports: `<svg viewBox="0 0 300 90" xmlns="http://www.w3.org/2000/svg"><rect width="300" height="90" fill="#020a05"/><path d="M40 72 Q55 30 80 28 Q105 26 115 48 Q125 65 118 72 Z" fill="#cc2200" opacity=".9"/><ellipse cx="78" cy="56" rx="22" ry="8" fill="#ffcc00" opacity=".2"/><circle cx="200" cy="45" r="28" fill="#111" stroke="#333" stroke-width="2"/><circle cx="200" cy="45" r="22" fill="#1a1a1a"/><path d="M180 35 Q200 28 220 35" stroke="#e8c547" stroke-width="1.5" fill="none"/><path d="M178 45 L222 45" stroke="#e8c547" stroke-width="1.5"/><path d="M180 55 Q200 62 220 55" stroke="#e8c547" stroke-width="1.5" fill="none"/></svg>`,
+  Beauty: `<svg viewBox="0 0 300 90" xmlns="http://www.w3.org/2000/svg"><rect width="300" height="90" fill="#0a0518"/><rect x="60" y="25" width="30" height="55" rx="6" fill="#1a0830" stroke="#4a2060"/><rect x="63" y="40" width="24" height="35" rx="4" fill="#6600cc" opacity=".5"/><rect x="66" y="18" width="18" height="10" rx="4" fill="#2a1040" stroke="#5a3080"/><rect x="110" y="30" width="24" height="50" rx="5" fill="#1a1a30" stroke="#3a3a50"/><rect x="113" y="40" width="18" height="36" rx="3" fill="#334488" opacity=".6"/><rect x="160" y="20" width="40" height="60" rx="8" fill="#cc2266" opacity=".8"/><rect x="165" y="26" width="30" height="44" rx="5" fill="#ff3380" opacity=".4"/><text x="180" y="52" font-size="8" fill="#fff" font-family="sans-serif" text-anchor="middle" opacity=".6">LIP</text><rect x="220" y="28" width="22" height="50" rx="5" fill="#2a2a10" stroke="#5a5a20"/></svg>`,
+  Kitchen: `<svg viewBox="0 0 300 90" xmlns="http://www.w3.org/2000/svg"><rect width="300" height="90" fill="#0d0d08"/><circle cx="100" cy="45" r="32" fill="#111" stroke="#1e1e1e" stroke-width="2"/><circle cx="100" cy="45" r="26" fill="#0d0d0d" stroke="#2a2a2a"/><path d="M100 19 L100 28" stroke="#e8c547" stroke-width="2" stroke-linecap="round"/><path d="M100 62 L100 71" stroke="#444" stroke-width="1.5" stroke-linecap="round"/><path d="M74 45 L83 45" stroke="#444" stroke-width="1.5" stroke-linecap="round"/><path d="M117 45 L126 45" stroke="#444" stroke-width="1.5" stroke-linecap="round"/><path d="M100 45 L100 33" stroke="#fff" stroke-width="2" stroke-linecap="round"/><path d="M100 45 L111 45" stroke="#e8c547" stroke-width="2" stroke-linecap="round"/><circle cx="100" cy="45" r="3" fill="#e8c547"/><rect x="175" y="20" width="90" height="55" rx="8" fill="#111" stroke="#1e1e1e"/><rect x="180" y="26" width="80" height="38" rx="5" fill="#0a0a0a"/><path d="M185 40 Q220 34 255 40" stroke="#333" stroke-width="1.5" fill="none"/></svg>`,
+  Toys: `<svg viewBox="0 0 300 90" xmlns="http://www.w3.org/2000/svg"><rect width="300" height="90" fill="#0a0508"/><rect x="25" y="40" width="40" height="30" rx="2" fill="#cc1111" stroke="#991111"/><circle cx="33" cy="37" r="6" fill="#dd2222"/><circle cx="45" cy="37" r="6" fill="#dd2222"/><circle cx="57" cy="37" r="6" fill="#dd2222"/><rect x="75" y="28" width="44" height="42" rx="2" fill="#f5d800" stroke="#c8b000"/><circle cx="86" cy="25" r="6" fill="#f5d800" stroke="#c8b000"/><circle cx="100" cy="25" r="6" fill="#f5d800" stroke="#c8b000"/><circle cx="113" cy="25" r="6" fill="#f5d800" stroke="#c8b000"/><rect x="130" y="18" width="50" height="36" rx="2" fill="#1155cc" stroke="#0033aa"/><circle cx="142" cy="15" r="6" fill="#2266dd"/><circle cx="158" cy="15" r="6" fill="#2266dd"/><circle cx="172" cy="15" r="6" fill="#2266dd"/><rect x="192" y="35" width="40" height="30" rx="2" fill="#11aa33" stroke="#008822"/><circle cx="204" cy="32" r="6" fill="#22bb44"/><circle cx="220" cy="32" r="6" fill="#22bb44"/><rect x="244" y="22" width="38" height="40" rx="2" fill="#ff6600" stroke="#cc4400"/><circle cx="256" cy="19" r="6" fill="#ff7722"/><circle cx="272" cy="19" r="6" fill="#ff7722"/></svg>`
+};
+
+const CATEGORIES = [
+  {name:'Electronics',count:1240},{name:'Fashion',count:3820},{name:'Home & Living',count:980},
+  {name:'Books',count:5600},{name:'Sports',count:740},{name:'Beauty',count:1100},
+  {name:'Kitchen',count:860},{name:'Toys',count:430}
+];
+
+const PRODUCTS = [
+  {id:1, name:'Wireless Noise-Cancelling Headphones',cat:'Electronics',price:5799,oldPrice:8999,rating:4.8,reviews:2341,badge:'Sale',svgKey:'headphones'},
+  {id:2, name:'Smart Watch Series 7',cat:'Electronics',price:12999,oldPrice:18999,rating:4.7,reviews:1892,badge:'Sale',svgKey:'smartwatch'},
+  {id:3, name:'Premium Running Shoes',cat:'Fashion',price:8499,oldPrice:null,rating:4.6,reviews:654,badge:'New',svgKey:'shoes'},
+  {id:4, name:'4K Ultra HD Smart TV 55"',cat:'Electronics',price:42999,oldPrice:54999,rating:4.9,reviews:3201,badge:'Sale',svgKey:'tv'},
+  {id:5, name:'Leather Crossbody Bag',cat:'Fashion',price:3299,oldPrice:null,rating:4.5,reviews:418,badge:'New',svgKey:'bag'},
+  {id:6, name:'Yoga Mat Premium Non-Slip',cat:'Sports',price:1199,oldPrice:1999,rating:4.7,reviews:879,badge:'Sale',svgKey:'yogamat'},
+  {id:7, name:'The Psychology of Money',cat:'Books',price:399,oldPrice:499,rating:4.9,reviews:5621,badge:null,svgKey:'book'},
+  {id:8, name:'Instant Pot Smart Pressure Cooker',cat:'Kitchen',price:6499,oldPrice:8499,rating:4.6,reviews:1120,badge:'Sale',svgKey:'instantpot'},
+  {id:9, name:'Portable Bluetooth Speaker',cat:'Electronics',price:2499,oldPrice:3999,rating:4.5,reviews:732,badge:null,svgKey:'speaker'},
+  {id:10,name:'Vitamin C Brightening Face Serum',cat:'Beauty',price:799,oldPrice:null,rating:4.8,reviews:2109,badge:'New',svgKey:'serum'},
+  {id:11,name:'Mechanical RGB Gaming Keyboard',cat:'Electronics',price:4299,oldPrice:5999,rating:4.7,reviews:943,badge:'Sale',svgKey:'keyboard'},
+  {id:12,name:'LEGO Classic Architecture Set',cat:'Toys',price:3499,oldPrice:null,rating:4.9,reviews:302,badge:'New',svgKey:'lego'}
+];
+
+let cart=[], activeFilter='All';
+
+// Categories
+const catGrid=document.getElementById('catGrid');
+CATEGORIES.forEach(c=>{
+  const el=document.createElement('div');
+  el.className='cat-card';
+  el.innerHTML=`${CAT_SVG[c.name]||`<svg viewBox="0 0 300 90"><rect width="300" height="90" fill="#111"/></svg>`}<div class="cat-body"><div class="cat-name">${c.name}</div><div class="cat-count">${c.count.toLocaleString()} items</div></div>`;
+  el.querySelector('svg').setAttribute('class','cat-svg');
+  el.onclick=()=>setFilter(c.name);
+  catGrid.appendChild(el);
+});
+
+// Filter buttons
+const filterBar=document.getElementById('filterBar');
+['All','Electronics','Fashion','Sports','Books','Beauty','Kitchen','Toys'].forEach(f=>{
+  const btn=document.createElement('button');
+  btn.className='filter-btn'+(f==='All'?' active':'');
+  btn.textContent=f; btn.onclick=()=>setFilter(f);
+  filterBar.appendChild(btn);
+});
+
+function setFilter(f){
+  activeFilter=f;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.toggle('active',b.textContent===f));
+  renderProducts();
+  document.getElementById('products').scrollIntoView({behavior:'smooth'});
+}
+
+function filterProducts(){
+  const q=document.getElementById('searchInput').value.toLowerCase();
+  document.querySelectorAll('.product-card').forEach(card=>{
+    card.style.display=card.dataset.name.includes(q)?'':'none';
+  });
+}
+
+function renderProducts(){
+  const grid=document.getElementById('productsGrid');
+  const filtered=activeFilter==='All'?PRODUCTS:PRODUCTS.filter(p=>p.cat===activeFilter);
+  grid.innerHTML='';
+  filtered.forEach(p=>{
+    const inCart=cart.find(c=>c.id===p.id);
+    const card=document.createElement('div');
+    card.className='product-card'; card.dataset.name=p.name.toLowerCase();
+    card.innerHTML=`
+      <div class="product-img-wrap">
+        ${SVG[p.svgKey]||'<svg viewBox="0 0 280 230"><rect width="280" height="230" fill="#111"/></svg>'}
+        ${p.badge?`<span class="badge ${p.badge==='New'?'new':''}">${p.badge}</span>`:''}
+        <button class="wishlist-btn" onclick="event.stopPropagation();wishlist(this)">🤍</button>
+      </div>
+      <div class="product-info">
+        <div class="product-cat">${p.cat}</div>
+        <div class="product-name">${p.name}</div>
+        <div class="product-rating">
+          <span class="stars">${'★'.repeat(Math.round(p.rating))}${'☆'.repeat(5-Math.round(p.rating))}</span>
+          <span class="rating-count">${p.rating} (${p.reviews.toLocaleString()})</span>
+        </div>
+        <div class="product-footer">
+          <div class="product-price">₹${p.price.toLocaleString()}${p.oldPrice?`<span class="old">₹${p.oldPrice.toLocaleString()}</span>`:''}</div>
+          <button class="add-cart-btn ${inCart?'added':''}" onclick="addToCart(${p.id})">${inCart?'✓ Added':'+ Cart'}</button>
+        </div>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+function wishlist(btn){
+  btn.textContent=btn.textContent==='🤍'?'❤️':'🤍';
+  showToast(btn.textContent==='❤️'?'Added to wishlist!':'Removed from wishlist');
+}
+
+function addToCart(id){
+  const p=PRODUCTS.find(p=>p.id===id);
+  const ex=cart.find(c=>c.id===id);
+  if(ex){ex.qty++;showToast('Quantity updated!');}
+  else{cart.push({...p,qty:1});showToast(p.name.split(' ').slice(0,3).join(' ')+' added!');}
+  updateCartUI();renderProducts();
+}
+
+function removeFromCart(id){cart=cart.filter(c=>c.id!==id);updateCartUI();renderProducts();}
+
+function changeQty(id,delta){
+  const item=cart.find(c=>c.id===id);if(!item)return;
+  item.qty+=delta;
+  if(item.qty<=0)removeFromCart(id);
+  else{updateCartUI();renderProducts();}
+}
+
+function updateCartUI(){
+  const total=cart.reduce((s,c)=>s+c.price*c.qty,0);
+  const count=cart.reduce((s,c)=>s+c.qty,0);
+  document.getElementById('cartCount').textContent=count;
+  const itemsEl=document.getElementById('cartItems');
+  const footerEl=document.getElementById('cartFooter');
+  if(cart.length===0){
+    itemsEl.innerHTML='<div class="cart-empty">🛒<br><br>Your cart is empty.<br>Start shopping!</div>';
+    footerEl.style.display='none';
+  } else {
+    itemsEl.innerHTML=cart.map(item=>`
+      <div class="cart-item">
+        <div class="cart-item-thumb">${SVG[item.svgKey]||''}</div>
+        <div class="cart-item-info">
+          <div class="cart-item-name">${item.name}</div>
+          <div class="cart-item-price">₹${(item.price*item.qty).toLocaleString()}</div>
+          <div class="cart-item-qty">
+            <button class="qty-btn" onclick="changeQty(${item.id},-1)">−</button>
+            <span class="qty-num">${item.qty}</span>
+            <button class="qty-btn" onclick="changeQty(${item.id},1)">+</button>
+            <button class="remove-btn" onclick="removeFromCart(${item.id})">Remove</button>
+          </div>
+        </div>
+      </div>`).join('');
+    footerEl.style.display='block';
+    document.getElementById('cartTotal').textContent=`₹${total.toLocaleString()}`;
+  }
+}
+
+function toggleCart(){
+  document.getElementById('cartSidebar').classList.toggle('open');
+  document.getElementById('cartOverlay').classList.toggle('open');
+}
+
+function openCheckout(){
+  toggleCart();
+  document.getElementById('checkoutForm').style.display='block';
+  document.getElementById('successScreen').style.display='none';
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function closeCheckout(e,force){
+  if(force||!e||e.target===document.getElementById('modalOverlay'))
+    document.getElementById('modalOverlay').classList.remove('open');
+}
+
+function placeOrder(){
+  const name=document.getElementById('fname').value;
+  const email=document.getElementById('femail').value;
+  if(!name||!email){showToast('Please fill your name and email','#ef4444');return;}
+  document.getElementById('checkoutForm').style.display='none';
+  document.getElementById('successScreen').style.display='block';
+  cart=[];updateCartUI();renderProducts();
+}
+
+function showToast(msg,color='#22c55e'){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.style.background=color;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+renderProducts();
+updateCartUI();
+</script>
+</body>
+</html>
